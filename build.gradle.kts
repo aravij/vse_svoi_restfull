@@ -38,3 +38,15 @@ tasks.withType<KotlinCompile> {
 tasks.withType<Test> {
 	useJUnitPlatform()
 }
+
+listOf(
+	"execute_locally",
+	"entity_methods"
+).forEach {
+	tasks.register<Test>("test_$it") {
+		group = "verification"
+		useJUnitPlatform {
+			includeTags(it)
+		}
+	}
+}
