@@ -13,7 +13,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
 import org.springframework.test.context.TestConstructor
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig
 
-
 @Tag("execute_locally")
 @DisplayName("Wish tests")
 internal class WishTest {
