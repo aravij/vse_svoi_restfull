@@ -41,7 +41,8 @@ tasks.withType<Test> {
 
 listOf(
 	"execute_locally",
-	"entity_methods"
+	"entity_methods",
+	"mapping_functionality"
 ).forEach {
 	tasks.register<Test>("test_$it") {
 		group = "verification"

@@ -2,10 +2,16 @@ package com.vsesvoi.entity
 
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldHaveSingleElement
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
+import org.springframework.test.context.TestConstructor
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig
 
 @Tag("execute_locally")
 @DisplayName("User tests")
@@ -55,6 +61,78 @@ internal class UserTest {
 
             user.wishes.shouldBeEmpty()
             wish.users.shouldBeEmpty()
+        }
+    }
+
+    @Nested
+    @DataJpaTest
+    @SpringJUnitConfig
+    @Tag("mapping_functionality")
+    @DisplayName("Test mapping functionality")
+    @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
+    inner class MappingFunctionality(val entityManager: TestEntityManager) {
+
+        @Test
+        fun `persist and find`() {
+            val (user) = SyntheticEntities()
+
+            entityManager.persistFlushFind(user) shouldBe user
+        }
+
+        @Test
+        fun `persist communities on cascade`() {
+            val (user, community) = SyntheticEntities()
+
+            user.add(community)
+
+            entityManager.persistAndFlush(user)
+
+            entityManager.find(community.javaClass, user.communities.first().id) shouldBe community
+        }
+
+        @Test
+        fun `do not delete communities on cascade`() {
+            val (user, community) = SyntheticEntities()
+
+            user.add(community)
+
+            entityManager.persistAndFlush(user)
+
+            // check that community got persisted
+            entityManager.find(community.javaClass, community.id).shouldNotBeNull()
+
+            entityManager.remove(user)
+
+            // check that community wasn't removed
+            entityManager.find(community.javaClass, community.id).shouldNotBeNull()
+        }
+
+        @Test
+        fun `persist wish on cascade`() {
+            val (user, _, wish) = SyntheticEntities()
+
+            user.add(wish)
+
+            entityManager.persistAndFlush(user)
+
+            entityManager.find(wish.javaClass, user.wishes.first().id) shouldBe wish
+        }
+
+        @Test
+        fun `do not delete wish on cascade`() {
+            val (user, _, wish) = SyntheticEntities()
+
+            user.add(wish)
+
+            entityManager.persistAndFlush(user)
+
+            // check that community got persisted
+            entityManager.find(wish.javaClass, wish.id).shouldNotBeNull()
+
+            entityManager.remove(user)
+
+            // check that community wasn't removed
+            entityManager.find(wish.javaClass, wish.id).shouldNotBeNull()
         }
     }
 }
