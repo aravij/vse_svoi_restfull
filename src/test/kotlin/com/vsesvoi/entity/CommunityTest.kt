@@ -1,5 +1,6 @@
 package com.vsesvoi.entity
 
+import com.vsesvoi.misc.TagNames
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldHaveSingleElement
 import io.kotest.matchers.nulls.shouldBeNull
@@ -14,12 +15,12 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
 import org.springframework.test.context.TestConstructor
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig
 
-@Tag("execute_locally")
+@Tag(TagNames.EXECUTE_LOCALLY)
 @DisplayName("Community tests")
 internal class CommunityTest {
 
     @Nested
-    @Tag("entity_methods")
+    @Tag(TagNames.ENTITY_METHODS)
     @DisplayName("Test pure entities methods")
     inner class EntityFunctionality {
         @Test
@@ -47,7 +48,7 @@ internal class CommunityTest {
     @Nested
     @DataJpaTest
     @SpringJUnitConfig
-    @Tag("mapping_functionality")
+    @Tag(TagNames.MAPPING_FUNCTIONALITY)
     @DisplayName("Test mapping functionality")
     @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
     inner class MappingFunctionality(val entityManager: TestEntityManager) {
